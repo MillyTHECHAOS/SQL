@@ -1,0 +1,15 @@
+WITH successful_transactions AS (
+  SELECT p.userId, d.date AS dealer_date, d.amount as dealer_amount 
+  FROM Pay AS p
+  JOIN Dealer AS d ON p.userId = d.userId
+  WHERE p.isPay == 1
+)
+SELECT
+  u.date AS registration_date, u.id AS user_id, u.Admin,
+  COUNT(st.userId) AS successful_deposits_count,
+  SUM(st.dealer_amount) AS successful_deposits_sum
+FROM User AS u
+JOIN successful_transactions AS st ON u.id = st.userId 
+WHERE u.Admin != 1
+GROUP BY user_id, registration_date
+ORDER BY successful_deposits_sum DESC
